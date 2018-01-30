@@ -6,6 +6,6 @@ import com.ajay.blessed.vertx.framework.web.RequestMappingConfig;
 
 public interface IRequestMappingProvider {
 
-	Set<RequestMappingConfig> getAllRequestMappings();
+	Set<RequestMappingConfig> getAllRequestMappings(String packageName);
 
 }

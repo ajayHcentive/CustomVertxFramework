@@ -22,8 +22,11 @@ public class BaseVerticle extends AbstractVerticle {
 
 	private IRequestMappingProvider reqMappingProvider;
 
-	public BaseVerticle() {
+	private final Class<?> mainClass;
+
+	public BaseVerticle(final Class<?> mainClass) {
 		this.reqMappingProvider = new DefaultRequestMappingProvider();
+		this.mainClass = mainClass;
 	}
 
 	@Override
@@ -52,7 +55,8 @@ public class BaseVerticle extends AbstractVerticle {
 
 		});
 
-		final Set<RequestMappingConfig> allMappings = reqMappingProvider.getAllRequestMappings();
+		final Set<RequestMappingConfig> allMappings = reqMappingProvider
+				.getAllRequestMappings(mainClass.getPackage().getName());
 		LOGGER.info("All the mappings present in the project are {}", allMappings);
 		for (RequestMappingConfig requestMappingConfig : allMappings) {
 			router.route(requestMappingConfig.getHttpMethod(), requestMappingConfig.getUrl())

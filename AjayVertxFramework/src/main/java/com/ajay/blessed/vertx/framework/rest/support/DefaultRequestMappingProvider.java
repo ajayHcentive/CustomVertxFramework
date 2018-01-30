@@ -33,9 +33,9 @@ public class DefaultRequestMappingProvider implements IRequestMappingProvider {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Set<RequestMappingConfig> getAllRequestMappings() {
+	public Set<RequestMappingConfig> getAllRequestMappings(final String packageName) {
 
-		String packageName = "com.ajay.blessed.data.market.verticle";
+		LOGGER.info("Search all the RestVerticle annotated classes in package {}", packageName);
 
 		final Set<RequestMappingConfig> allReqMappingConfigs = new HashSet<>();
 		final Optional<Set<Class<?>>> matchedClasses = classFinder
