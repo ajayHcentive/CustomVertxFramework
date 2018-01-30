@@ -27,6 +27,9 @@ dependencies {
   compile "org.apache.commons:commons-lang3:3.7"
   
   compile "org.slf4j:slf4j-api:1.7.25"
+  // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
+testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+  
   
   
   

@@ -16,13 +16,13 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 
-public class RestVerticle extends AbstractVerticle {
+public class BaseVerticle extends AbstractVerticle {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(RestVerticle.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(BaseVerticle.class);
 
 	private IRequestMappingProvider reqMappingProvider;
 
-	public RestVerticle() {
+	public BaseVerticle() {
 		this.reqMappingProvider = new DefaultRequestMappingProvider();
 	}
 
