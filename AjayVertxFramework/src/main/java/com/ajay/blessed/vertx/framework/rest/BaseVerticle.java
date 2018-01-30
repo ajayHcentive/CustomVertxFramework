@@ -5,14 +5,14 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.ajay.blessed.vertx.framework.exception.IFailureHandler;
+import com.ajay.blessed.vertx.framework.exception.JsonFailureHandler;
 import com.ajay.blessed.vertx.framework.rest.support.DefaultRequestMappingProvider;
 import com.ajay.blessed.vertx.framework.rest.support.IRequestMappingProvider;
 import com.ajay.blessed.vertx.framework.web.RequestMappingConfig;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
-import io.vertx.core.http.HttpHeaders;
-import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 
@@ -22,11 +22,14 @@ public class BaseVerticle extends AbstractVerticle {
 
 	private IRequestMappingProvider reqMappingProvider;
 
+	private IFailureHandler failureHandler;
+
 	private final Class<?> mainClass;
 
 	public BaseVerticle(final Class<?> mainClass) {
 		this.reqMappingProvider = new DefaultRequestMappingProvider();
 		this.mainClass = mainClass;
+		this.failureHandler = new JsonFailureHandler();
 	}
 
 	@Override
@@ -36,7 +39,7 @@ public class BaseVerticle extends AbstractVerticle {
 		/**
 		 * This sets the default exception handler.
 		 */
-		configureExceptionHandler();
+		registerExceptionHanlder();
 		LOGGER.info("Exception handler set.");
 		final Router router = Router.router(vertx);
 		router.route().handler(BodyHandler.create());
@@ -45,14 +48,7 @@ public class BaseVerticle extends AbstractVerticle {
 		 * Failure handler is registered to do the processing after error has occured.
 		 */
 		router.route().failureHandler(ctx -> {
-
-			final JsonObject error = new JsonObject().put("timestamp", System.nanoTime())
-					.put("exception", ctx.failure().getClass().getName())
-					.put("exceptionMessage", ctx.failure().getMessage()).put("path", ctx.request().path());
-
-			ctx.response().putHeader(HttpHeaders.CONTENT_TYPE, "application/json; charset=utf-8");
-			ctx.response().end(error.encode());
-
+			failureHandler.handleError(ctx);
 		});
 
 		final Set<RequestMappingConfig> allMappings = reqMappingProvider
@@ -68,7 +64,12 @@ public class BaseVerticle extends AbstractVerticle {
 		LOGGER.info("Starting the httpserver on port 8080");
 	}
 
-	protected void configureExceptionHandler() {
+	protected void registerFailureHandler(IFailureHandler failureHandler) {
+		this.failureHandler = failureHandler;
+
+	}
+
+	protected void registerExceptionHanlder() {
 		vertx.exceptionHandler();
 	}
 
