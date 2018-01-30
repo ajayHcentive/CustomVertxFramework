@@ -2,6 +2,7 @@ plugins {
   id 'java'
   id 'application'
   id 'com.github.johnrengelman.shadow' version '2.0.1'
+  id 'maven-publish'
 }
 
 ext {
@@ -27,29 +28,30 @@ dependencies {
   compile "org.apache.commons:commons-lang3:3.7"
   
   compile "org.slf4j:slf4j-api:1.7.25"
-  // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
-testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
-  
-  
-  
-  
+  testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
   
 
 }
 
-mainClassName = 'com.example.demo.MainVerticle'
 
-shadowJar {
-  classifier = 'fat'
-  mergeServiceFiles {
-    include 'META-INF/services/io.vertx.core.spi.VerticleFactory'
-  }
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+        	groupId 'org.ajay.blessed'
+            artifactId 'ajay-vertx-core'
+            version '0.1'
+            from components.java
+        }
+    }
 }
-
-run {
-  args = ['run', mainClassName, "--launcher-class=io.vertx.core.Launcher"]
+publishing {
+    repositories {
+        maven {
+            // change to point to your repo, e.g. http://my.org/repo
+            url "$buildDir/repo"
+        }
+    }
 }
-
 task wrapper(type: Wrapper) {
   gradleVersion = '4.0'
 }
